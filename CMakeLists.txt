@@ -4,5 +4,5 @@ project(bakery)
 set(CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_FLAGS "-pthread")
 
-set(SOURCE_FILES main.cpp Baker.cpp Baker.h Oven.cpp Oven.h Client.cpp Client.h)
+set(SOURCE_FILES bakery.cpp Baker.cpp Baker.h Oven.cpp Oven.h Client.cpp Client.h)
 add_executable(so2 ${SOURCE_FILES})
