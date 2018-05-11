@@ -1,7 +1,3 @@
-//
-// Created by Edzia on 2018-05-11.
-//
-
 #include "Shelf.h"
 
 Shelf::Shelf(){

@@ -1,7 +1,3 @@
-//
-// Created by Edzia on 2018-05-11.
-//
-
 #ifndef BAKERY_SHELF_H
 #define BAKERY_SHELF_H
 

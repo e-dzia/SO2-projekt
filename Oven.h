@@ -9,8 +9,8 @@
  * Jednocześnie jest zasobem - tylko jeden wątek może z niego korzystać
  */
 class Oven {
+    static const int typesOfBakedGoods = 3;
     std::mutex oven;
-    std::thread bake;
 
 };
 

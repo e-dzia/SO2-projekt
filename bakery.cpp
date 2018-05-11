@@ -6,6 +6,7 @@
 #include "Utility.h"
 #include "Shelf.h"
 #include "Account.h"
+#include "Client.h"
 
 /*
  * Zasoby:
@@ -13,7 +14,8 @@
  * konto piekarni - double
  */
 
-double bakedGoodPrices[3] = {1.57, 2.34, 3.28};
+const int typesOfBakedGoods = 3;
+double bakedGoodPrices[typesOfBakedGoods] = {1.57, 2.34, 3.28};
 
 std::mutex coutLock;
 
@@ -54,9 +56,9 @@ int main(){
     Utility stockroom;
     Account account;
     Shelf shelf;
+    Client client;
 
-
-    std::thread t1(consumeBread, &shelf, &account);
+    std::thread t1(client.live, &account, &shelf);
     std::thread t2(produceBread, &shelf);
 
     t1.join();
