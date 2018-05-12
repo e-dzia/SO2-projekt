@@ -2,7 +2,7 @@
 #include "Client.h"
 
 int Client::numberOfClients = 0;
-std::queue<int> Client::queue;
+std::deque<int> Client::queue;
 std::mutex Client::queueMutex;
 const int Client::typesOfBakedGoods = 3;
 double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
@@ -31,7 +31,7 @@ void Client::walkIntoStore() {
     shoppingList = random(0, typesOfBakedGoods-1);
 
     queueMutex.lock();
-    queue.push(this->id);
+    queue.push_back(this->id);
     queueMutex.unlock();
 
     action = IN_LINE;
@@ -53,7 +53,7 @@ void Client::walkOutOfStore() {
     shoppingList = -1;
 
     queueMutex.lock();
-    queue.pop();
+    queue.pop_front();
     queueMutex.unlock();
 
     action = OUT;

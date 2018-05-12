@@ -73,10 +73,13 @@ int main(){
     while (simulationOn){
         coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
-                  << shelf.getNumberOfCroissants() << " " << account.getBalance();
-        std::cout << "    " << Client::queue.front() << " ";
+                  << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
         for (Client& client: clients){
             std::cout << "\t" << client.getAction() << " " << client.getProgress() << " " << client.getShoppingList();
+        }
+        std::cout << "     ";
+        for (int id : Client::queue){
+            std::cout << id << " ";
         }
         std::cout << std::endl;
         coutLock.unlock();

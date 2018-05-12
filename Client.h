@@ -37,7 +37,7 @@ class Client {
     void sleepRandom(const int &min, const int &max);
 
 public:
-    static std::queue<int> queue;
+    static std::deque<int> queue;
     Client();
     Client(const Client& client);
     //Client& operator=(Client const&);
