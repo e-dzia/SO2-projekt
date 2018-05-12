@@ -66,6 +66,7 @@ int main(){
     Account account;
     Shelf shelf;
     Oven oven;
+
     std::vector<Client> clients;
     for (int i = 0; i < numberOfClients; i++){
         clients.emplace_back(Client());
@@ -82,8 +83,7 @@ int main(){
     for (Baker& baker: bakers){
         baker.start(&stockroom, &table, &oven, &shelf);
     }
-    //std::thread put(produceBread, &shelf, &oven);
-    std::thread produce(ovenThread, &oven);
+    std::thread ovenT(ovenThread, &oven);
 
     // DISPLAY THINGS *************************************************
     int i = 0;
@@ -101,21 +101,20 @@ int main(){
         std::cout << std::endl;
         coutLock.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (i++ > 100){
+        if (i++ > 10){
             simulationOn = false;
         }
     }
 
     // STOP THREADS *************************************************
-    oven.stop();
-    produce.join();
-    //put.join();
     for (Client& client: clients){
         client.stop();
     }
     for (Baker& baker: bakers){
         baker.stop();
     }
+    oven.stop();
+    ovenT.join();
 
     return 0;
 }

@@ -27,7 +27,7 @@ class Client {
     bool alive = false;
     clientAction action = OUTSIDE;
     int progress = 0;
-    std::thread life;
+    //std::thread life;
 
     void walkIntoStore();
     void doShopping(Account* account, Shelf* shelf);
@@ -40,6 +40,7 @@ class Client {
 
 public:
     static std::deque<int> queue;
+    std::thread life;
 
     Client();
     Client(const Client& client);

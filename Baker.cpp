@@ -1,5 +1,6 @@
 #include "Baker.h"
 #include <random>
+#include <iostream>
 
 int Baker::numberOfBakers = 0;
 std::deque<int> Baker::queueStockroom;
@@ -29,7 +30,7 @@ Baker::~Baker() {
 
 
 void Baker::live(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf) {
-    while(alive){
+    while(this->alive){
         action = WAITING;
         useStockroom(stockroom);
         useTable(table);
@@ -59,10 +60,12 @@ void Baker::sleepRandom(const int &min, const int &max) {
     for (int i = 0; i < numberOfLoops; i++){
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         progress = 100*i/numberOfLoops;
+        if (!alive) return;
     }
 }
 
 bool Baker::checkQueue(int type) {
+    if (!alive) return true;
     switch(type){
         case 0: {
             std::lock_guard<std::mutex> guard(queueStockroomMutex);
@@ -120,7 +123,7 @@ void Baker::useStockroom(Utility *stockroom) {
     stockroom->startUsing();
     action = STOCKROOM;
     nowProducing = random(0, typesOfBakedGoods-1);
-    sleepRandom(1000,2000);
+    sleepRandom(500,2000);
     stockroom->stopUsing();
 
     action = WAITING;
@@ -144,7 +147,7 @@ void Baker::useTable(Utility *table) {
 
     table->startUsing();
     action = TABLE;
-    sleepRandom(2000,3000);
+    sleepRandom(1000,3000);
     table->stopUsing();
 
     action = WAITING;
@@ -183,6 +186,7 @@ void Baker::useShelf(Shelf *shelf) {
     for (int i = 0; i < typesOfBakedGoods; i++){
         shelf->addBread(i,numberOfBakedGoods[i]);
         numberOfBakedGoods[i] = 0;
+        sleepRandom(100,500);
     }
 }
 

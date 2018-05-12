@@ -1,4 +1,5 @@
 #include <random>
+#include <iostream>
 #include "Client.h"
 
 int Client::numberOfClients = 0;
@@ -11,7 +12,6 @@ const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0
 Client::Client() {
     this->id = this->numberOfClients++;
     shoppingList = -1;
-    id = -1;
     alive = false;
     action = OUTSIDE;
     progress = 0;
@@ -42,8 +42,9 @@ void Client::doShopping(Account* account, Shelf* shelf) {
     action = BUYING;
     if (shelf->takeBread(shoppingList)){
         account->pay(bakedGoodPrices[shoppingList]);
-        sleepRandom(1000, 2000);
+        sleepRandom(2000, 3000);
     }
+    sleepRandom(100,500);
     action = IN_STORE;
 }
 
@@ -63,7 +64,7 @@ void Client::live(Account* account, Shelf* shelf) {
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();
-        sleepRandom(3000,8000);
+        sleepRandom(5000,15000);
     }
 }
 
@@ -88,10 +89,12 @@ void Client::sleepRandom(const int &min, const int &max) {
     for (int i = 0; i < numberOfLoops; i++){
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         progress = 100*i/numberOfLoops;
+        if (!alive) return;
     }
 }
 
 bool Client::checkQueue() {
+    if (!alive) return true;
     std::lock_guard<std::mutex> guard(queueMutex);
     return queue.front() == this->id;
 }

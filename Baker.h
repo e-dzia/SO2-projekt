@@ -34,9 +34,6 @@ class Baker {
     bool alive = false;
     bakerAction action = WAITING;
     int progress = 0;
-    std::thread life;
-
-    int numberOfBakedGoods[];
 
     void useStockroom(Utility *stockroom);
     void useTable(Utility* table);
@@ -52,6 +49,7 @@ public:
     static std::deque<int> queueStockroom;
     static std::deque<int> queueTable;
     static std::deque<int> queueOven;
+    std::thread life;
 
     Baker();
     Baker(const Baker& client);
@@ -66,6 +64,9 @@ public:
 
     void start(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf);
     void stop();
+
+private:
+    int numberOfBakedGoods[];
 };
 
 

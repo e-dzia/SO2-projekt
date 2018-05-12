@@ -2,7 +2,7 @@
 
 Shelf::Shelf(){
     for (int &bakedGood : bakedGoods) {
-        bakedGood = 0;
+        bakedGood = 3;
     }
 }
 
