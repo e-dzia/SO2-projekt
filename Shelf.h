@@ -15,6 +15,7 @@ public:
     Shelf& operator=(Shelf const&) = delete;
 
     void addBread(int type);
+    void addBread(int type, int amount);
     bool takeBread(int type);
 
     int getNumberOfBreads() const;

@@ -7,6 +7,7 @@
 #include "Shelf.h"
 #include "Account.h"
 #include "Client.h"
+#include "Oven.h"
 
 /*
  * Zasoby:
@@ -15,26 +16,29 @@
  */
 
 const int typesOfBakedGoods = 3;
-double bakedGoodPrices[typesOfBakedGoods] = {1.57, 2.34, 3.28};
+int numberOfClients = 5;
 
 std::mutex coutLock;
 
 bool simulationOn = true;
 
-void produceBread(Shelf *shelf){
-    for (int i = 0; i < 10; i ++){
-       /* coutLock.lock();
-        std::cout << std::this_thread::get_id() << " " << shelf->getNumberOfBreads() << " "
-                  << shelf->getNumberOfBaguettes() << " " << shelf->getNumberOfCroissants() << std::endl;
-        coutLock.unlock();*/
-        shelf->addBread(0);
-        shelf->addBread(1);
-        shelf->addBread(2);
+void produceBread(Shelf *shelf, Oven *oven){
+    for (int i = 0; i < 100; i ++){
+        for (int j = 0; j < typesOfBakedGoods; j++){
+            oven->putIn(j);
+        }
+        for (int j = 0; j < typesOfBakedGoods; j++){
+            shelf->addBread(j, oven->takeOut(j));
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-void consumeBread(Shelf* shelf, Account * account){
+void ovenThread(Oven *oven){
+    oven->live();
+}
+
+/*void consumeBread(Shelf* shelf, Account * account){
     for (int i = 0; i < 10; i ++){
         coutLock.lock();
         std::cout << std::this_thread::get_id() << " " << shelf->getNumberOfBreads() << " "
@@ -51,33 +55,37 @@ void consumeBread(Shelf* shelf, Account * account){
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-}
+}*/
 
 int main(){
+    // CREATE VARIABLES *************************************************
     Utility table;
     Utility stockroom;
     Account account;
     Shelf shelf;
+    Oven oven;
     std::vector<Client> clients;
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < numberOfClients; i++){
         clients.emplace_back(Client());
     }
 
+    //START THREADS *************************************************
     for (Client& client: clients){
         client.start(&account, &shelf);
     }
-    //std::thread t1(client.live, &account, &shelf);
-    std::thread t2(produceBread, &shelf);
+    std::thread put(produceBread, &shelf, &oven);
+    std::thread produce(ovenThread, &oven);
 
+    // DISPLAY THINGS *************************************************
     int i = 0;
     while (simulationOn){
         coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
                   << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
-        for (Client& client: clients){
+        /*for (Client& client: clients){
             std::cout << "\t" << client.getAction() << " " << client.getProgress() << " " << client.getShoppingList();
         }
-        std::cout << "     ";
+        std::cout << "     ";*/
         for (int id : Client::queue){
             std::cout << id << " ";
         }
@@ -89,8 +97,10 @@ int main(){
         }
     }
 
-    //t1.join();
-    t2.join();
+    // STOP THREADS *************************************************
+    oven.stop();
+    produce.join();
+    put.join();
     for (Client& client: clients){
         client.stop();
     }

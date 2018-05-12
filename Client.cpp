@@ -5,7 +5,7 @@ int Client::numberOfClients = 0;
 std::deque<int> Client::queue;
 std::mutex Client::queueMutex;
 const int Client::typesOfBakedGoods = 3;
-double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
+const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
 
 int Client::random(const int &min, const int &max) {
     static thread_local std::mt19937* generator = nullptr;

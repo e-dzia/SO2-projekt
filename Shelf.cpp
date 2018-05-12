@@ -11,6 +11,11 @@ void Shelf::addBread(int type){
     bakedGoods[type]++;
 }
 
+void Shelf::addBread(int type, int amount){
+    std::lock_guard<std::mutex> guard(shelf);
+    bakedGoods[type] += amount;
+}
+
 bool Shelf::takeBread(int type){
     std::lock_guard<std::mutex> guard(shelf);
     if (bakedGoods[type] > 0){
