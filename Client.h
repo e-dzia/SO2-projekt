@@ -14,9 +14,10 @@ class Client {
     enum clientAction{
         WAITING, IN_LINE, BUYING, OUT
     };
+    std::string clientActionName[4] = {"waiting", "in_line", "buying", "out"};
 
     static int numberOfClients;
-    static std::queue<int> queue;
+
     static std::mutex queueMutex;
     static const int typesOfBakedGoods;
     static double bakedGoodPrices[];// = {1.57, 2.34, 3.28};
@@ -24,8 +25,8 @@ class Client {
     int shoppingList = -1;
     int id = -1;
     bool alive = false;
-    clientAction action = WAITING;
-    int progress;
+    clientAction action = OUT;
+    int progress = 0;
     std::thread life;
 
     void walkIntoStore();
@@ -36,19 +37,19 @@ class Client {
     void sleepRandom(const int &min, const int &max);
 
 public:
+    static std::queue<int> queue;
     Client();
-    Client(const Client& client) = delete;
-    Client& operator=(Client const&) = delete;
+    Client(const Client& client);
+    //Client& operator=(Client const&);
     ~Client();
 
     void live(Account* account, Shelf* shelf);
     int getId() const;
     bool isAlive() const;
     void setAlive(bool alive);
-
-    clientAction getAction() const;
-
+    std::string getAction() const;
     int getProgress() const;
+    int getShoppingList() const;
 
     void start(Account *account, Shelf *shelf);
     void stop();

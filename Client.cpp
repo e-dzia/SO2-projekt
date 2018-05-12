@@ -5,7 +5,7 @@ int Client::numberOfClients = 0;
 std::queue<int> Client::queue;
 std::mutex Client::queueMutex;
 const int Client::typesOfBakedGoods = 3;
-double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.57, 2.34, 3.28};
+double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
 
 int Client::random(const int &min, const int &max) {
     static thread_local std::mt19937* generator = nullptr;
@@ -28,7 +28,7 @@ Client::~Client() {
 void Client::walkIntoStore() {
     action = WAITING;
     sleepRandom(500, 1000);
-    shoppingList = random(0, typesOfBakedGoods);
+    shoppingList = random(0, typesOfBakedGoods-1);
 
     queueMutex.lock();
     queue.push(this->id);
@@ -61,6 +61,7 @@ void Client::walkOutOfStore() {
 
 void Client::live(Account* account, Shelf* shelf) {
     while(alive){
+        action = OUT;
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();
@@ -102,12 +103,20 @@ void Client::stop() {
     alive = false;
 }
 
-Client::clientAction Client::getAction() const {
-    return action;
+std::string Client::getAction() const {
+    return clientActionName[action];
 }
 
 int Client::getProgress() const {
     return progress;
+}
+
+Client::Client(const Client &client) : id (client.id){
+
+}
+
+int Client::getShoppingList() const {
+    return shoppingList;
 }
 
 

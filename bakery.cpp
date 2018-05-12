@@ -58,18 +58,27 @@ int main(){
     Utility stockroom;
     Account account;
     Shelf shelf;
-    Client client;
+    std::vector<Client> clients;
+    for (int i = 0; i < 5; i++){
+        clients.emplace_back(Client());
+    }
 
+    for (Client& client: clients){
+        client.start(&account, &shelf);
+    }
     //std::thread t1(client.live, &account, &shelf);
-    client.start(&account, &shelf);
     std::thread t2(produceBread, &shelf);
 
     int i = 0;
     while (simulationOn){
         coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
-                  << shelf.getNumberOfCroissants() << " " << account.getBalance() << " "
-                  << client.getAction() << " " << client.getProgress() << std::endl;
+                  << shelf.getNumberOfCroissants() << " " << account.getBalance();
+        std::cout << "    " << Client::queue.front() << " ";
+        for (Client& client: clients){
+            std::cout << "\t" << client.getAction() << " " << client.getProgress() << " " << client.getShoppingList();
+        }
+        std::cout << std::endl;
         coutLock.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (i++ > 100){
@@ -79,7 +88,9 @@ int main(){
 
     //t1.join();
     t2.join();
-    client.stop();
+    for (Client& client: clients){
+        client.stop();
+    }
 
     return 0;
 }
