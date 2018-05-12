@@ -19,12 +19,14 @@ double bakedGoodPrices[typesOfBakedGoods] = {1.57, 2.34, 3.28};
 
 std::mutex coutLock;
 
+bool simulationOn = true;
+
 void produceBread(Shelf *shelf){
     for (int i = 0; i < 10; i ++){
-        coutLock.lock();
+       /* coutLock.lock();
         std::cout << std::this_thread::get_id() << " " << shelf->getNumberOfBreads() << " "
                   << shelf->getNumberOfBaguettes() << " " << shelf->getNumberOfCroissants() << std::endl;
-        coutLock.unlock();
+        coutLock.unlock();*/
         shelf->addBread(0);
         shelf->addBread(1);
         shelf->addBread(2);
@@ -58,11 +60,26 @@ int main(){
     Shelf shelf;
     Client client;
 
-    std::thread t1(client.live, &account, &shelf);
+    //std::thread t1(client.live, &account, &shelf);
+    client.start(&account, &shelf);
     std::thread t2(produceBread, &shelf);
 
-    t1.join();
+    int i = 0;
+    while (simulationOn){
+        coutLock.lock();
+        std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
+                  << shelf.getNumberOfCroissants() << " " << account.getBalance() << " "
+                  << client.getAction() << " " << client.getProgress() << std::endl;
+        coutLock.unlock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (i++ > 100){
+            simulationOn = false;
+        }
+    }
+
+    //t1.join();
     t2.join();
+    client.stop();
 
     return 0;
 }

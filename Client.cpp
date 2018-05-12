@@ -3,6 +3,9 @@
 
 int Client::numberOfClients = 0;
 std::queue<int> Client::queue;
+std::mutex Client::queueMutex;
+const int Client::typesOfBakedGoods = 3;
+double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.57, 2.34, 3.28};
 
 int Client::random(const int &min, const int &max) {
     static thread_local std::mt19937* generator = nullptr;
@@ -14,6 +17,12 @@ int Client::random(const int &min, const int &max) {
 
 Client::Client() {
     this->id = this->numberOfClients++;
+}
+
+Client::~Client() {
+    if (life.joinable()){
+        life.join();
+    }
 }
 
 void Client::walkIntoStore() {
@@ -34,8 +43,8 @@ void Client::doShopping(Account* account, Shelf* shelf) {
     }
     action = BUYING;
     if (shelf->takeBread(shoppingList)){
-        sleepRandom(1000, 2000);
         account->pay(bakedGoodPrices[shoppingList]);
+        sleepRandom(1000, 2000);
     }
     action = WAITING;
 }
@@ -83,3 +92,22 @@ bool Client::checkQueue() {
     std::lock_guard<std::mutex> guard(queueMutex);
     return queue.front() == this->id;
 }
+
+void Client::start(Account *account, Shelf *shelf) {
+    alive = true;
+    life = std::thread(&Client::live, this, account, shelf);
+}
+
+void Client::stop() {
+    alive = false;
+}
+
+Client::clientAction Client::getAction() const {
+    return action;
+}
+
+int Client::getProgress() const {
+    return progress;
+}
+
+

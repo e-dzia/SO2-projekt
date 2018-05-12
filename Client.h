@@ -18,14 +18,15 @@ class Client {
     static int numberOfClients;
     static std::queue<int> queue;
     static std::mutex queueMutex;
-    static const int typesOfBakedGoods = 3;
-    double bakedGoodPrices[typesOfBakedGoods] = {1.57, 2.34, 3.28};
+    static const int typesOfBakedGoods;
+    static double bakedGoodPrices[];// = {1.57, 2.34, 3.28};
 
     int shoppingList = -1;
     int id = -1;
     bool alive = false;
     clientAction action = WAITING;
     int progress;
+    std::thread life;
 
     void walkIntoStore();
     void doShopping(Account* account, Shelf* shelf);
@@ -36,13 +37,25 @@ class Client {
 
 public:
     Client();
+    Client(const Client& client) = delete;
+    Client& operator=(Client const&) = delete;
+    ~Client();
 
     void live(Account* account, Shelf* shelf);
     int getId() const;
     bool isAlive() const;
     void setAlive(bool alive);
 
+    clientAction getAction() const;
+
+    int getProgress() const;
+
+    void start(Account *account, Shelf *shelf);
+    void stop();
+
     bool checkQueue();
+
+
 };
 
 
