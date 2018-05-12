@@ -12,9 +12,9 @@
  */
 class Client {
     enum clientAction{
-        WAITING, IN_LINE, BUYING, OUT
+        IN_STORE, IN_LINE, BUYING, OUTSIDE
     };
-    std::string clientActionName[4] = {"waiting", "in_line", "buying", "out"};
+    std::string clientActionName[4] = {"in_store", "in_line", "buying", "outside"};
 
     static int numberOfClients;
 
@@ -25,7 +25,7 @@ class Client {
     int shoppingList = -1;
     int id = -1;
     bool alive = false;
-    clientAction action = OUT;
+    clientAction action = OUTSIDE;
     int progress = 0;
     std::thread life;
 
@@ -36,26 +36,24 @@ class Client {
     int random(const int& min, const int& max);
     void sleepRandom(const int &min, const int &max);
 
+    bool checkQueue();
+
 public:
     static std::deque<int> queue;
+
     Client();
     Client(const Client& client);
-    //Client& operator=(Client const&);
     ~Client();
 
     void live(Account* account, Shelf* shelf);
     int getId() const;
     bool isAlive() const;
-    void setAlive(bool alive);
     std::string getAction() const;
     int getProgress() const;
     int getShoppingList() const;
 
     void start(Account *account, Shelf *shelf);
     void stop();
-
-    bool checkQueue();
-
 
 };
 

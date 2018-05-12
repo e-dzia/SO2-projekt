@@ -10,8 +10,6 @@
  * Jednocześnie jest zasobem - tylko jeden wątek może z niego korzystać
  */
 class Oven {
-    static const int typesOfBakedGoods;
-    std::mutex oven;
 
     struct BakedGood{
         int type;
@@ -26,8 +24,12 @@ class Oven {
             this->remainingTime -= 100;
         }
     };
-    std::vector<BakedGood> notYetBaked;
+
+    static const int typesOfBakedGoods;
     static const int bakingTimes[];
+
+    std::mutex oven;
+    std::vector<BakedGood> notYetBaked;
 
     bool functioning = true;
 

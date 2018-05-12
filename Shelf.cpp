@@ -1,8 +1,8 @@
 #include "Shelf.h"
 
 Shelf::Shelf(){
-    for (int i = 0; i < typesOfBakedGoods; i++){
-        bakedGoods[i] = 0;
+    for (int &bakedGood : bakedGoods) {
+        bakedGood = 0;
     }
 }
 

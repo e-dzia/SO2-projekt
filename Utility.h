@@ -11,19 +11,9 @@ class Utility {
 public:
     Utility() = default;
 
-    void startUsing(){
-        table.lock();
-        isLocked = true;
-    }
-
-    void stopUsing(){
-        table.unlock();
-        isLocked = false;
-    }
-
-    bool isBeingUsed(){
-        return isLocked;
-    }
+    void startUsing();
+    void stopUsing();
+    bool isBeingUsed();
 };
 
 

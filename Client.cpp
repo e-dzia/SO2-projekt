@@ -7,16 +7,14 @@ std::mutex Client::queueMutex;
 const int Client::typesOfBakedGoods = 3;
 const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
 
-int Client::random(const int &min, const int &max) {
-    static thread_local std::mt19937* generator = nullptr;
-    static std::hash<std::thread::id> hasher;
-    if (!generator) generator = new std::mt19937(clock() + hasher(std::this_thread::get_id()));
-    std::uniform_int_distribution<int> distribution(min, max);
-    return distribution(*generator);
-}
 
 Client::Client() {
     this->id = this->numberOfClients++;
+    shoppingList = -1;
+    id = -1;
+    alive = false;
+    action = OUTSIDE;
+    progress = 0;
 }
 
 Client::~Client() {
@@ -26,7 +24,7 @@ Client::~Client() {
 }
 
 void Client::walkIntoStore() {
-    action = WAITING;
+    action = IN_STORE;
     sleepRandom(500, 1000);
     shoppingList = random(0, typesOfBakedGoods-1);
 
@@ -46,7 +44,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
         account->pay(bakedGoodPrices[shoppingList]);
         sleepRandom(1000, 2000);
     }
-    action = WAITING;
+    action = IN_STORE;
 }
 
 void Client::walkOutOfStore() {
@@ -56,12 +54,12 @@ void Client::walkOutOfStore() {
     queue.pop_front();
     queueMutex.unlock();
 
-    action = OUT;
+    action = OUTSIDE;
 }
 
 void Client::live(Account* account, Shelf* shelf) {
     while(alive){
-        action = OUT;
+        action = OUTSIDE;
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();
@@ -77,8 +75,12 @@ bool Client::isAlive() const {
     return alive;
 }
 
-void Client::setAlive(bool alive) {
-    Client::alive = alive;
+int Client::random(const int &min, const int &max) {
+    static thread_local std::mt19937* generator = nullptr;
+    static std::hash<std::thread::id> hasher;
+    if (!generator) generator = new std::mt19937(clock() + hasher(std::this_thread::get_id()));
+    std::uniform_int_distribution<int> distribution(min, max);
+    return distribution(*generator);
 }
 
 void Client::sleepRandom(const int &min, const int &max) {

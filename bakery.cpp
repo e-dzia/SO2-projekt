@@ -8,6 +8,7 @@
 #include "Account.h"
 #include "Client.h"
 #include "Oven.h"
+#include "Baker.h"
 
 /*
  * Zasoby:
@@ -17,6 +18,7 @@
 
 const int typesOfBakedGoods = 3;
 int numberOfClients = 5;
+int numberOfBakers = 5;
 
 std::mutex coutLock;
 
@@ -59,8 +61,8 @@ void ovenThread(Oven *oven){
 
 int main(){
     // CREATE VARIABLES *************************************************
-    Utility table;
     Utility stockroom;
+    Utility table;
     Account account;
     Shelf shelf;
     Oven oven;
@@ -68,12 +70,19 @@ int main(){
     for (int i = 0; i < numberOfClients; i++){
         clients.emplace_back(Client());
     }
+    std::vector<Baker> bakers;
+    for (int i = 0; i < numberOfBakers; i++){
+        bakers.emplace_back(Baker());
+    }
 
     //START THREADS *************************************************
     for (Client& client: clients){
         client.start(&account, &shelf);
     }
-    std::thread put(produceBread, &shelf, &oven);
+    for (Baker& baker: bakers){
+        baker.start(&stockroom, &table, &oven, &shelf);
+    }
+    //std::thread put(produceBread, &shelf, &oven);
     std::thread produce(ovenThread, &oven);
 
     // DISPLAY THINGS *************************************************
@@ -82,10 +91,10 @@ int main(){
         coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
                   << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
-        /*for (Client& client: clients){
-            std::cout << "\t" << client.getAction() << " " << client.getProgress() << " " << client.getShoppingList();
+        for (Baker& baker: bakers){
+            std::cout << "\t" << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing();
         }
-        std::cout << "     ";*/
+        std::cout << "     Q: ";
         for (int id : Client::queue){
             std::cout << id << " ";
         }
@@ -100,9 +109,12 @@ int main(){
     // STOP THREADS *************************************************
     oven.stop();
     produce.join();
-    put.join();
+    //put.join();
     for (Client& client: clients){
         client.stop();
+    }
+    for (Baker& baker: bakers){
+        baker.stop();
     }
 
     return 0;
