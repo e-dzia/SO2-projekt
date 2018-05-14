@@ -15,7 +15,7 @@ public:
 
     void pay(double amount);
 
-    double getBalance() const;
+    double getBalance();
 };
 
 

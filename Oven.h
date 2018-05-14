@@ -5,10 +5,6 @@
 #include <mutex>
 #include <vector>
 
-/*
- * Piec zwiększa stan upieczenia pieczywa, które jest w środku
- * Jednocześnie jest zasobem - tylko jeden wątek może z niego korzystać
- */
 class Oven {
 
     struct BakedGood{
@@ -35,6 +31,8 @@ class Oven {
 
 public:
     Oven() = default;
+    Oven(const Oven& oven) = delete;
+    Oven& operator=(Oven const&) = delete;
 
     void putIn(int type);
     int takeOut(int type);

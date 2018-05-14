@@ -6,8 +6,7 @@ int Client::numberOfClients = 0;
 std::deque<int> Client::queue;
 std::mutex Client::queueMutex;
 const int Client::typesOfBakedGoods = 3;
-const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.0, 2.0, 3.0};
-
+const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.57, 2.34, 3.22};
 
 Client::Client() {
     this->id = this->numberOfClients++;
@@ -17,6 +16,13 @@ Client::Client() {
     progress = 0;
 }
 
+Client::Client(const Client &client) : id (client.id){}
+
+Client &Client::operator=(const Client &client) {
+    this->id = client.id;
+    return *this;
+}
+
 Client::~Client() {
     if (life.joinable()){
         life.join();
@@ -24,6 +30,7 @@ Client::~Client() {
 }
 
 void Client::walkIntoStore() {
+    if (!alive) return;
     action = IN_STORE;
     sleepRandom(500, 1000);
     shoppingList = random(0, typesOfBakedGoods-1);
@@ -39,6 +46,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
     while (!checkQueue()){
         sleepRandom(100, 200);
     }
+    if (!alive) return;
     action = BUYING;
     if (shelf->takeBread(shoppingList)){
         account->pay(bakedGoodPrices[shoppingList]);
@@ -49,6 +57,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
 }
 
 void Client::walkOutOfStore() {
+    if (!alive) return;
     shoppingList = -1;
 
     queueMutex.lock();
@@ -114,10 +123,6 @@ std::string Client::getAction() const {
 
 int Client::getProgress() const {
     return progress;
-}
-
-Client::Client(const Client &client) : id (client.id){
-
 }
 
 int Client::getShoppingList() const {

@@ -22,6 +22,14 @@ Baker::Baker() {
     numberOfBakedGoods[typesOfBakedGoods];
 }
 
+Baker::Baker(const Baker &Baker) : id (Baker.id){
+}
+
+Baker& Baker::operator=(const Baker &baker) {
+    this->id = baker.id;
+    return *this;
+}
+
 Baker::~Baker() {
     if (life.joinable()){
         life.join();
@@ -99,10 +107,6 @@ std::string Baker::getAction() const {
 
 int Baker::getProgress() const {
     return progress;
-}
-
-Baker::Baker(const Baker &Baker) : id (Baker.id){
-
 }
 
 int Baker::getNowProducing() const {
@@ -189,5 +193,3 @@ void Baker::useShelf(Shelf *shelf) {
         sleepRandom(100,500);
     }
 }
-
-

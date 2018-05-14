@@ -10,12 +10,6 @@
 #include "Oven.h"
 #include "Baker.h"
 
-/*
- * Zasoby:
- * półka - liczba chlebów określonego typu?
- * konto piekarni - double
- */
-
 const int typesOfBakedGoods = 3;
 int numberOfClients = 5;
 int numberOfBakers = 5;
@@ -24,40 +18,9 @@ std::mutex coutLock;
 
 bool simulationOn = true;
 
-void produceBread(Shelf *shelf, Oven *oven){
-    for (int i = 0; i < 100; i ++){
-        for (int j = 0; j < typesOfBakedGoods; j++){
-            oven->putIn(j);
-        }
-        for (int j = 0; j < typesOfBakedGoods; j++){
-            shelf->addBread(j, oven->takeOut(j));
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-}
-
 void ovenThread(Oven *oven){
     oven->live();
 }
-
-/*void consumeBread(Shelf* shelf, Account * account){
-    for (int i = 0; i < 10; i ++){
-        coutLock.lock();
-        std::cout << std::this_thread::get_id() << " " << shelf->getNumberOfBreads() << " "
-                  << shelf->getNumberOfBaguettes() << " " << shelf->getNumberOfCroissants() << " " << account->getBalance() << std::endl;
-        coutLock.unlock();
-        if (shelf->takeBread(0)){
-            account->pay(bakedGoodPrices[0]);
-        }
-        if (shelf->takeBread(1)){
-            account->pay(bakedGoodPrices[1]);
-        }
-        if (shelf->takeBread(2)){
-            account->pay(bakedGoodPrices[2]);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-}*/
 
 int main(){
     // CREATE VARIABLES *************************************************
@@ -101,7 +64,7 @@ int main(){
         std::cout << std::endl;
         coutLock.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (i++ > 10){
+        if (i++ > 1000){
             simulationOn = false;
         }
     }

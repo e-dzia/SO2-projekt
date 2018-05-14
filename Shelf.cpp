@@ -1,6 +1,7 @@
 #include "Shelf.h"
 
 Shelf::Shelf(){
+    std::lock_guard<std::mutex> guard(shelf);
     for (int &bakedGood : bakedGoods) {
         bakedGood = 3;
     }
@@ -25,15 +26,18 @@ bool Shelf::takeBread(int type){
     return false;
 }
 
-int Shelf::getNumberOfBreads() const {
+int Shelf::getNumberOfBreads(){
+    std::lock_guard<std::mutex> guard(shelf);
     return bakedGoods[0];
 }
 
-int Shelf::getNumberOfBaguettes() const {
+int Shelf::getNumberOfBaguettes(){
+    std::lock_guard<std::mutex> guard(shelf);
     return bakedGoods[1];
 }
 
-int Shelf::getNumberOfCroissants() const {
+int Shelf::getNumberOfCroissants(){
+    std::lock_guard<std::mutex> guard(shelf);
     return bakedGoods[2];
 }
 

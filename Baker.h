@@ -8,13 +8,6 @@
 #include "Oven.h"
 #include "Shelf.h"
 
-/*
- * Piekarze
-     * pobierają składniki z magazynu (najkrótszy etap),
-     * urabiają ciasto na stole (średnio długi etap) i
-     * pieką chleb w piekarniku (najdłuższy etap), -> ważne! musi przy wkładaniu sprawdzać, czy jakieś chleby w piecu są skończone
-     * po czym kładą gotowy chleb na półki.
- */
 class Baker {
     enum bakerAction{
         STOCKROOM, TABLE, OVEN, SHELF, WAITING
@@ -34,6 +27,9 @@ class Baker {
     bool alive = false;
     bakerAction action = WAITING;
     int progress = 0;
+    std::thread life;
+
+    int numberOfBakedGoods[];
 
     void useStockroom(Utility *stockroom);
     void useTable(Utility* table);
@@ -45,17 +41,18 @@ class Baker {
 
     bool checkQueue(int type);
 
+    void live(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf);
+
 public:
     static std::deque<int> queueStockroom;
     static std::deque<int> queueTable;
     static std::deque<int> queueOven;
-    std::thread life;
 
     Baker();
     Baker(const Baker& client);
+    Baker& operator=(const Baker& baker);
     ~Baker();
 
-    void live(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf);
     int getId() const;
     bool isAlive() const;
     std::string getAction() const;
@@ -64,9 +61,6 @@ public:
 
     void start(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf);
     void stop();
-
-private:
-    int numberOfBakedGoods[];
 };
 
 

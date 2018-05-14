@@ -7,9 +7,6 @@
 #include "Account.h"
 #include "Shelf.h"
 
-/*
- * Klienci wchodzą do sklepu i kupują chleb z półki, jednocześnie płacąc za niego (zwiększając stan konta piekarni). Chlebów może być kilka rodzajów dla urozmaicenia (klient chce kupić konkretny rodzaj).
- */
 class Client {
     enum clientAction{
         IN_STORE, IN_LINE, BUYING, OUTSIDE
@@ -20,14 +17,14 @@ class Client {
 
     static std::mutex queueMutex;
     static const int typesOfBakedGoods;
-    static const double bakedGoodPrices[];// = {1.57, 2.34, 3.28};
+    static const double bakedGoodPrices[];
 
     int shoppingList = -1;
     int id = -1;
     bool alive = false;
     clientAction action = OUTSIDE;
     int progress = 0;
-    //std::thread life;
+    std::thread life;
 
     void walkIntoStore();
     void doShopping(Account* account, Shelf* shelf);
@@ -40,10 +37,10 @@ class Client {
 
 public:
     static std::deque<int> queue;
-    std::thread life;
 
     Client();
     Client(const Client& client);
+    Client& operator=(const Client& client);
     ~Client();
 
     void live(Account* account, Shelf* shelf);

@@ -18,9 +18,9 @@ public:
     void addBread(int type, int amount);
     bool takeBread(int type);
 
-    int getNumberOfBreads() const;
-    int getNumberOfBaguettes() const;
-    int getNumberOfCroissants() const;
+    int getNumberOfBreads();
+    int getNumberOfBaguettes();
+    int getNumberOfCroissants();
 
 };
 
