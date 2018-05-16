@@ -4,6 +4,7 @@
 #include <thread>
 #include <queue>
 #include <mutex>
+#include <atomic>
 #include "Account.h"
 #include "Shelf.h"
 
@@ -11,7 +12,7 @@ class Client {
     enum clientAction{
         IN_STORE, IN_LINE, BUYING, OUTSIDE
     };
-    std::string clientActionName[4] = {"in_store", "in_line", "buying", "outside"};
+    const std::string clientActionName[4] = {"in_store", "in_line", "buying", "outside"};
 
     static int numberOfClients;
 
@@ -19,11 +20,11 @@ class Client {
     static const int typesOfBakedGoods;
     static const double bakedGoodPrices[];
 
-    int shoppingList = -1;
     int id = -1;
-    bool alive = false;
-    clientAction action = OUTSIDE;
-    int progress = 0;
+    std::atomic<int> shoppingList;// = -1;
+    std::atomic<bool> alive;// = false;
+    std::atomic<clientAction> action;// = OUTSIDE;
+    std::atomic<int> progress;// = 0;
     std::thread life;
 
     void walkIntoStore();
@@ -46,7 +47,7 @@ public:
     void live(Account* account, Shelf* shelf);
     int getId() const;
     bool isAlive() const;
-    std::string getAction() const;
+    std::string getAction();
     int getProgress() const;
     int getShoppingList() const;
 

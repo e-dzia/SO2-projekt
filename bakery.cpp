@@ -55,7 +55,7 @@ int main(){
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
                   << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
         for (Baker& baker: bakers){
-            std::cout << "\t" << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing();
+            std::cout << "\t" << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing()<< " " << baker.isAlive();
         }
         std::cout << "     Q: ";
         for (int id : Client::queue){

@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 #include <deque>
+#include <atomic>
 #include "Utility.h"
 #include "Oven.h"
 #include "Shelf.h"
@@ -12,7 +13,7 @@ class Baker {
     enum bakerAction{
         STOCKROOM, TABLE, OVEN, SHELF, WAITING
     };
-    std::string bakerActionName[5] = {"stockroom", "table", "oven", "shelf", "waiting"};
+    const std::string bakerActionName[5] = {"stockroom", "table", "oven", "shelf", "waiting"};
 
     static int numberOfBakers;
 
@@ -22,11 +23,11 @@ class Baker {
 
     static const int typesOfBakedGoods;
 
-    int nowProducing = -1;
     int id = -1;
-    bool alive = false;
-    bakerAction action = WAITING;
-    int progress = 0;
+    std::atomic<int> nowProducing;// = -1;
+    std::atomic<bool> alive;// = false;
+    std::atomic<bakerAction> action;// = WAITING;
+    std::atomic<int> progress;// = 0;
     std::thread life;
 
     int numberOfBakedGoods[];
@@ -36,8 +37,8 @@ class Baker {
     void useOven(Oven* oven);
     void useShelf(Shelf* shelf);
 
-    int random(const int& min, const int& max);
-    void sleepRandom(const int &min, const int &max);
+    int random(int min, int max);
+    void sleepRandom(int min, int max);
 
     bool checkQueue(int type);
 
@@ -55,7 +56,7 @@ public:
 
     int getId() const;
     bool isAlive() const;
-    std::string getAction() const;
+    std::string getAction();
     int getProgress() const;
     int getNowProducing() const;
 

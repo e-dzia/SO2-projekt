@@ -6,7 +6,7 @@
 
 class Account {
     double balance;
-    std::mutex account;
+    std::mutex balanceMutex;
 
 public:
     Account();

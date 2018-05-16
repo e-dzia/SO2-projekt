@@ -11,7 +11,6 @@ std::mutex Baker::queueTableMutex;
 std::mutex Baker::queueOvenMutex;
 const int Baker::typesOfBakedGoods = 3;
 
-
 Baker::Baker() {
     this->id = this->numberOfBakers++;
     nowProducing = -1;
@@ -19,11 +18,10 @@ Baker::Baker() {
     alive = false;
     action = WAITING;
     progress = 0;
-    numberOfBakedGoods[typesOfBakedGoods];
+    numberOfBakedGoods[Baker::typesOfBakedGoods];
 }
 
-Baker::Baker(const Baker &Baker) : id (Baker.id){
-}
+Baker::Baker(const Baker &Baker) : id (Baker.id){}
 
 Baker& Baker::operator=(const Baker &baker) {
     this->id = baker.id;
@@ -35,7 +33,6 @@ Baker::~Baker() {
         life.join();
     }
 }
-
 
 void Baker::live(Utility *stockroom, Utility* table, Oven* oven, Shelf* shelf) {
     while(this->alive){
@@ -55,7 +52,7 @@ bool Baker::isAlive() const {
     return alive;
 }
 
-int Baker::random(const int &min, const int &max) {
+int Baker::random(const int min, const int max) {
     static thread_local std::mt19937* generator = nullptr;
     static std::hash<std::thread::id> hasher;
     if (!generator) generator = new std::mt19937(clock() + hasher(std::this_thread::get_id()));
@@ -63,12 +60,12 @@ int Baker::random(const int &min, const int &max) {
     return distribution(*generator);
 }
 
-void Baker::sleepRandom(const int &min, const int &max) {
+void Baker::sleepRandom(const int min, const int max) {
     int numberOfLoops = random(min,max)/100;
     for (int i = 0; i < numberOfLoops; i++){
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        progress = 100*i/numberOfLoops;
-        if (!alive) return;
+        this->progress = 100*i/numberOfLoops;
+        if (!this->alive) return;
     }
 }
 
@@ -101,7 +98,7 @@ void Baker::stop() {
     alive = false;
 }
 
-std::string Baker::getAction() const {
+std::string Baker::getAction(){
     return bakerActionName[action];
 }
 
@@ -187,9 +184,11 @@ void Baker::useOven(Oven *oven) {
 }
 
 void Baker::useShelf(Shelf *shelf) {
+    action = SHELF;
     for (int i = 0; i < typesOfBakedGoods; i++){
         shelf->addBread(i,numberOfBakedGoods[i]);
         numberOfBakedGoods[i] = 0;
         sleepRandom(100,500);
     }
+    action = WAITING;
 }

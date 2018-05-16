@@ -5,13 +5,13 @@ const int Oven::typesOfBakedGoods = 3;
 const int Oven::bakingTimes[Oven::typesOfBakedGoods] = {3000, 5000, 7000};
 
 void Oven::putIn(int type) {
-    std::lock_guard<std::mutex> guard(oven);
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
     notYetBaked.emplace_back(BakedGood(type, bakingTimes[type]));
 }
 
 int Oven::takeOut(int type) {
     int takenOut = 0;
-    std::lock_guard<std::mutex> guard(oven);
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
     for (auto it = notYetBaked.begin(); it != notYetBaked.end(); ++it){
         if (it->type == type && it->remainingTime <= 0){
             takenOut++;
@@ -23,7 +23,7 @@ int Oven::takeOut(int type) {
 }
 
 void Oven::bakeAll() {
-    std::lock_guard<std::mutex> guard(oven);
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
     for (BakedGood& bakedGood: notYetBaked){
         bakedGood.bake();
     }

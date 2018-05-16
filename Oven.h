@@ -24,7 +24,7 @@ class Oven {
     static const int typesOfBakedGoods;
     static const int bakingTimes[];
 
-    std::mutex oven;
+    std::mutex notYetBakedMutex;
     std::vector<BakedGood> notYetBaked;
 
     bool functioning = true;

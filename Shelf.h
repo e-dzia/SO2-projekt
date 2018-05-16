@@ -7,7 +7,7 @@
 class Shelf {
     static const int typesOfBakedGoods = 3;
     int bakedGoods[typesOfBakedGoods];
-    std::mutex shelf;
+    std::mutex bakedGoodsMutex;
 
 public:
     Shelf();

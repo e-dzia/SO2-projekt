@@ -32,7 +32,7 @@ Client::~Client() {
 void Client::walkIntoStore() {
     if (!alive) return;
     action = IN_STORE;
-    sleepRandom(500, 1000);
+    sleepRandom(100, 500);
     shoppingList = random(0, typesOfBakedGoods-1);
 
     queueMutex.lock();
@@ -117,7 +117,7 @@ void Client::stop() {
     alive = false;
 }
 
-std::string Client::getAction() const {
+std::string Client::getAction() {
     return clientActionName[action];
 }
 
