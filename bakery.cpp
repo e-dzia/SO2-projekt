@@ -1,8 +1,6 @@
-
-//zasoby: magazyn, stół, piec, półka, konto piekarni.
-
 #include <thread>
 #include <iostream>
+#include <ncurses.h>
 #include "Utility.h"
 #include "Shelf.h"
 #include "Account.h"
@@ -14,15 +12,31 @@ const int typesOfBakedGoods = 3;
 int numberOfClients = 5;
 int numberOfBakers = 5;
 
-std::mutex coutLock;
-
 bool simulationOn = true;
 
 void ovenThread(Oven *oven){
     oven->live();
 }
 
+void getQ(){
+    char esc = getch();
+    while (esc != 'q'){
+        esc = getch();
+    }
+    simulationOn = false;
+}
+
 int main(){
+	// START NCURSES *************************************************
+	initscr();
+    noecho();
+    nodelay(stdscr, TRUE);
+
+    start_color();
+    init_pair( 1, COLOR_RED, COLOR_BLACK );
+    init_pair( 2, COLOR_GREEN, COLOR_BLACK);
+    init_pair( 3, COLOR_CYAN, COLOR_BLACK);
+
     // CREATE VARIABLES *************************************************
     Utility stockroom;
     Utility table;
@@ -47,11 +61,10 @@ int main(){
         baker.start(&stockroom, &table, &oven, &shelf);
     }
     std::thread ovenT(ovenThread, &oven);
+    std::thread end(getQ);
 
     // DISPLAY THINGS *************************************************
-    int i = 0;
     while (simulationOn){
-        coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
                   << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
         for (Baker& baker: bakers){
@@ -62,11 +75,7 @@ int main(){
             std::cout << id << " ";
         }
         std::cout << std::endl;
-        coutLock.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (i++ > 1000){
-            simulationOn = false;
-        }
     }
 
     // STOP THREADS *************************************************
@@ -78,6 +87,9 @@ int main(){
     }
     oven.stop();
     ovenT.join();
+
+	// END NCURSES *************************************************
+    endwin();
 
     return 0;
 }
