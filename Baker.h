@@ -28,6 +28,7 @@ class Baker {
     std::atomic<bool> alive;// = false;
     std::atomic<bakerAction> action;// = WAITING;
     std::atomic<int> progress;// = 0;
+    
     std::thread life;
 
     int numberOfBakedGoods[];
@@ -48,6 +49,7 @@ public:
     static std::deque<int> queueStockroom;
     static std::deque<int> queueTable;
     static std::deque<int> queueOven;
+
 
     Baker();
     Baker(const Baker& client);

@@ -14,14 +14,15 @@ const int Baker::typesOfBakedGoods = 3;
 Baker::Baker() {
     this->id = this->numberOfBakers++;
     nowProducing = -1;
-    id = -1;
     alive = false;
     action = WAITING;
     progress = 0;
     numberOfBakedGoods[Baker::typesOfBakedGoods];
 }
 
-Baker::Baker(const Baker &Baker) : id (Baker.id){}
+Baker::Baker(const Baker &Baker){
+    this->id = Baker.id;
+}
 
 Baker& Baker::operator=(const Baker &baker) {
     this->id = baker.id;
@@ -166,16 +167,16 @@ void Baker::useOven(Oven *oven) {
     queueOven.push_back(id);
     queueOvenMutex.unlock();
 
-    while (!checkQueue(1)){
+    while (!checkQueue(2)){
         sleepRandom(100, 200);
     }
 
     oven->putIn(nowProducing);
     action = OVEN;
+    sleepRandom(500,1000);
     for (int i = 0; i < typesOfBakedGoods; i++){
         numberOfBakedGoods[i] = oven->takeOut(i);
     }
-    sleepRandom(500,1000);
     action = WAITING;
 
     queueOvenMutex.lock();

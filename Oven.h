@@ -17,7 +17,8 @@ class Oven {
         }
 
         void bake(){
-            this->remainingTime -= 100;
+            if (this-> remainingTime > 0)
+                this->remainingTime -= 100;
         }
     };
 
@@ -38,8 +39,13 @@ public:
     int takeOut(int type);
 
     void bakeAll();
+    
+    int getRemainingTime(int i);
+    int getType(int i);
+    
+    int getSize();
 
-    void live();
+    void live(); 
     void stop();
 };
 
