@@ -9,7 +9,7 @@
 #include "Baker.h"
 
 const int typesOfBakedGoods = 3;
-const int numberOfClients = 20;
+const int numberOfClients = 10;
 const int numberOfBakers = 7;
 
 bool simulationOn = true;
@@ -27,6 +27,7 @@ void getQ(){
 }
 
 void displayObjects(){ 
+    attron(A_BOLD);
     mvprintw(0, 5, "STOCKROOM");
     mvprintw(0, 20, "TABLE");
     mvprintw(0, 35, "OVEN");
@@ -34,18 +35,19 @@ void displayObjects(){
     mvprintw(0, 60, "INSIDE OVEN:");
     
     attron( COLOR_PAIR( 1 ) ); 
-    mvprintw(9, 20, "breads");
+    mvprintw(9, 15, "breads");
     attroff( COLOR_PAIR( 1 ) ); 
     
     attron( COLOR_PAIR( 2 ) ); 
-    mvprintw(9, 30, "baguettes");
+    mvprintw(9, 25, "baguettes");
     attroff( COLOR_PAIR( 2 ) ); 
     
     attron( COLOR_PAIR( 3 ) ); 
-    mvprintw(9, 40, "croissants");
+    mvprintw(9, 35, "croissants");
     attroff( COLOR_PAIR( 3 ) ); 
     
     mvprintw(10, 0, "SHELF");
+    attroff(A_BOLD);
 }
 
 int main(){
@@ -95,8 +97,7 @@ int main(){
         
         // QUEUE STOCKROOM
         int line = 1;
-        for (int i = 0; i < numberOfBakers; i++){
-            if (Baker::queueStockroom.size() > i){
+        for (int i = 0; i < Baker::queueStockroom.size(); i++){
                 int colour = -1;
                 switch (bakers[Baker::queueStockroom.at(i)].getNowProducing()){
                     case 0:
@@ -118,16 +119,11 @@ int main(){
                 if (i == 0){
                     mvprintw(line-1, 7, std::to_string(bakers[Baker::queueStockroom.at(i)].getProgress()).c_str());
                 }
-            }
-            else {
-                mvprintw(line++, 5, " ");
-            }
         }
         
         // QUEUE TABLE
         line = 1;
-        for (int i = 0; i < numberOfBakers; i++){
-            if (Baker::queueTable.size() > i){
+        for (int i = 0; i < Baker::queueTable.size(); i++){
                 int colour = -1;
                 switch (bakers[Baker::queueTable.at(i)].getNowProducing()){
                     case 0:
@@ -145,20 +141,15 @@ int main(){
                 }
                 attron( COLOR_PAIR( colour ) ); 
                 mvprintw(line++, 20, std::to_string(Baker::queueTable.at(i)).c_str());
-                attroff( COLOR_PAIR( colour ) ); if (i == 0){
+                attroff( COLOR_PAIR( colour ) ); 
+                if (i == 0){
                     mvprintw(line-1, 22, std::to_string(bakers[Baker::queueTable.at(i)].getProgress()).c_str());
                 }
-                
-            }
-            else {
-                mvprintw(line++, 20, " ");
-            }
         }
         
         // QUEUE OVEN
         line = 1;
-        for (int i = 0; i < numberOfBakers; i++){
-            if (Baker::queueOven.size() > i){
+        for (int i = 0; i < Baker::queueOven.size(); i++){
                 int colour = -1;
                 switch (bakers[Baker::queueOven.at(i)].getNowProducing()){
                     case 0:
@@ -180,16 +171,11 @@ int main(){
                 if (i == 0){
                     mvprintw(line-1, 37, std::to_string(bakers[Baker::queueOven.at(i)].getProgress()).c_str());
                 }
-            }
-            else {
-                mvprintw(line++, 35, " ");
-            }
         }
         
         // INSIDE OVEN
         line = 1;
-        for (int i = 0; i < 100; i++){
-            if (oven.getSize() > i){
+        for (int i = 0; i < oven.getSize(); i++){
                 int colour = -1; 
                 switch (oven.getType(i)){
                     case 0:
@@ -208,36 +194,24 @@ int main(){
                 attron( COLOR_PAIR( colour ) ); 
                 mvprintw(line++, 60, std::to_string(oven.getRemainingTime(i)).c_str());
                 attroff( COLOR_PAIR( colour ) ); 
-            }
-            else {
-                mvprintw(line++, 60, " ");
-            }
         }
-         
-      /*  line = 0;
-        for (Baker& baker: bakers){
-            std::string to_display = baker.getAction() + "\t" + std::to_string(baker.getProgress()) + "\t" + std::to_string(baker.getNowProducing());
-            mvprintw(line++, 50, to_display.c_str());
-        }*/
         
+        // INSIDE SHELF
         attron( COLOR_PAIR( 1 ) ); 
-        mvprintw(10, 20, std::to_string(shelf.getNumberOfBreads()).c_str());
+        mvprintw(10, 15, std::to_string(shelf.getNumberOfBreads()).c_str());
         attroff( COLOR_PAIR( 1 ) ); 
         
         attron( COLOR_PAIR( 2 ) ); 
-        mvprintw(10, 30, std::to_string(shelf.getNumberOfBaguettes()).c_str());
+        mvprintw(10, 25, std::to_string(shelf.getNumberOfBaguettes()).c_str());
         attroff( COLOR_PAIR( 2 ) ); 
         
         attron( COLOR_PAIR( 3 ) ); 
-        mvprintw(10, 40, std::to_string(shelf.getNumberOfCroissants()).c_str());
+        mvprintw(10, 35, std::to_string(shelf.getNumberOfCroissants()).c_str());
         attroff( COLOR_PAIR( 3 ) ); 
         
-        /*for (Baker& baker: bakers){
-            std::cout << "\t" << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing()<< " " << baker.isAlive();
-        }*/
+        // CLIENTS
         line = 12;
-        for (int i = 0; i < numberOfClients; i++){
-            if (Client::queue.size() > i){
+        for (int i = 0; i < Client::queue.size(); i++){
                 int colour = -1;
                 switch (clients[Client::queue.at(i)].getShoppingList()){
                     case 0:
@@ -256,11 +230,9 @@ int main(){
                 attron( COLOR_PAIR( colour ) ); 
                 mvprintw(line++, 5, std::to_string(Client::queue.at(i)).c_str());
                 attroff( COLOR_PAIR( colour ) ); 
-            }
-            else {
-                mvprintw(line++, 5, " ");
-            }
         }
+        
+        // WAIT
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
@@ -273,6 +245,7 @@ int main(){
     }
     oven.stop();
     ovenT.join();
+    end.join();
 
     // END NCURSES *************************************************
     endwin();

@@ -52,7 +52,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
         account->pay(bakedGoodPrices[shoppingList]);
         sleepRandom(2000, 3000);
     }
-    sleepRandom(100,500);
+    sleepRandom(100,200);
     action = IN_STORE;
 }
 
