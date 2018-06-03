@@ -14,7 +14,6 @@ const int Baker::typesOfBakedGoods = 3;
 Baker::Baker() {
     this->id = this->numberOfBakers++;
     nowProducing = -1;
-    id = -1;
     alive = false;
     action = WAITING;
     progress = 0;
@@ -166,7 +165,7 @@ void Baker::useOven(Oven *oven) {
     queueOven.push_back(id);
     queueOvenMutex.unlock();
 
-    while (!checkQueue(1)){
+    while (!checkQueue(2)){
         sleepRandom(100, 200);
     }
 

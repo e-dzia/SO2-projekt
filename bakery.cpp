@@ -54,8 +54,20 @@ int main(){
         coutLock.lock();
         std::cout << shelf.getNumberOfBreads() << " " << shelf.getNumberOfBaguettes() << " "
                   << shelf.getNumberOfCroissants() << " " << account.getBalance() << "    ";
-        for (Baker& baker: bakers){
-            std::cout << "\t" << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing()<< " " << baker.isAlive();
+        /*for (Baker& baker: bakers){
+            std::cout << "\t" << baker.getId() << " " << baker.getAction() << " " << baker.getProgress() << " " << baker.getNowProducing();
+        }*/
+        std::cout << "     S: ";
+        for (int id : Baker::queueStockroom){
+            std::cout << id << " ";
+        }
+        std::cout << "     T: ";
+        for (int id : Baker::queueTable){
+            std::cout << id << " ";
+        }
+        std::cout << "     O: ";
+        for (int id : Baker::queueOven){
+            std::cout << id << " ";
         }
         std::cout << "     Q: ";
         for (int id : Client::queue){
