@@ -79,7 +79,7 @@ void Client::walkOutOfStore() {
 void Client::live(Account* account, Shelf* shelf) {
     while(alive){
         action = OUTSIDE;
-        sleepRandom(1000,3000); //TODO sleepRandom(5000,15000);
+        sleepRandom(5000,15000);
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();
