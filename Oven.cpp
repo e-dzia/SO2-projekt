@@ -40,3 +40,18 @@ void Oven::live(){
 void Oven::stop() {
     functioning = false;
 }
+
+int Oven::getRemainingTime(int i){
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
+    return notYetBaked[i].remainingTime;
+}
+
+int Oven::getType(int i){
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
+    return notYetBaked[i].type;
+}
+
+int Oven::getSize(){
+    std::lock_guard<std::mutex> guard(notYetBakedMutex);
+    return notYetBaked.size();
+}

@@ -52,7 +52,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
         account->pay(bakedGoodPrices[shoppingList]);
         sleepRandom(2000, 3000);
     }
-    sleepRandom(100,500);
+    sleepRandom(100,200);
     action = IN_STORE;
 }
 
@@ -70,10 +70,10 @@ void Client::walkOutOfStore() {
 void Client::live(Account* account, Shelf* shelf) {
     while(alive){
         action = OUTSIDE;
+        sleepRandom(5000,15000);
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();
-        sleepRandom(5000,15000);
     }
 }
 
