@@ -8,11 +8,11 @@
 #include "Oven.h"
 #include "Baker.h"
 
-const int typesOfBakedGoods = 3;
 const int numberOfClients = 10;
 const int numberOfBakers = 7;
 
 bool simulationOn = true;
+const int typesOfBakedGoods = 3;
 
 void ovenThread(Oven *oven){
     oven->live();

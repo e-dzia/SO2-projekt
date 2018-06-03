@@ -117,6 +117,8 @@ int Baker::getNowProducing() const {
 void Baker::useStockroom(Utility *stockroom) {
     action = WAITING;
 
+    nowProducing = random(0, typesOfBakedGoods-1);
+
     queueStockroomMutex.lock();
     queueStockroom.push_back(id);
     queueStockroomMutex.unlock();
@@ -133,7 +135,6 @@ void Baker::useStockroom(Utility *stockroom) {
 
     stockroom->startUsing();
     action = STOCKROOM;
-    nowProducing = random(0, typesOfBakedGoods-1);
     sleepRandom(500,2000);
     stockroom->stopUsing();
 
