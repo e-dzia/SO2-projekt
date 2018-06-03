@@ -5,6 +5,7 @@
 #include <mutex>
 #include <deque>
 #include <atomic>
+#include <condition_variable>
 #include "Utility.h"
 #include "Oven.h"
 #include "Shelf.h"
@@ -20,6 +21,10 @@ class Baker {
     static std::mutex queueStockroomMutex;
     static std::mutex queueTableMutex;
     static std::mutex queueOvenMutex;
+
+    static std::condition_variable queueStockroomCV;
+    static std::condition_variable queueTableCV;
+    static std::condition_variable queueOvenCV;
 
     static const int typesOfBakedGoods;
 

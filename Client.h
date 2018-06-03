@@ -5,6 +5,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <condition_variable>
 #include "Account.h"
 #include "Shelf.h"
 
@@ -17,6 +18,7 @@ class Client {
     static int numberOfClients;
 
     static std::mutex queueMutex;
+    static std::condition_variable queueCV;
     static const int typesOfBakedGoods;
     static const double bakedGoodPrices[];
 

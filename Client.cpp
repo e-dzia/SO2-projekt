@@ -5,6 +5,7 @@
 int Client::numberOfClients = 0;
 std::deque<int> Client::queue;
 std::mutex Client::queueMutex;
+std::condition_variable Client::queueCV;
 const int Client::typesOfBakedGoods = 3;
 const double Client::bakedGoodPrices[Client::typesOfBakedGoods] = {1.57, 2.34, 3.22};
 
@@ -43,10 +44,15 @@ void Client::walkIntoStore() {
 }
 
 void Client::doShopping(Account* account, Shelf* shelf) {
-    while (!checkQueue()){
-        sleepRandom(100, 200);
+    {
+        std::unique_lock<std::mutex> lck(queueMutex);
+        queueCV.wait(lck, [this] { return queue.front() == this->id || !this->alive; });
     }
-    if (!alive) return;
+
+    if (!alive) {
+        queueCV.notify_all();
+        return;
+    }
     action = BUYING;
     if (shelf->takeBread(shoppingList)){
         account->pay(bakedGoodPrices[shoppingList]);
@@ -54,6 +60,7 @@ void Client::doShopping(Account* account, Shelf* shelf) {
     }
     sleepRandom(100,200);
     action = IN_STORE;
+
 }
 
 void Client::walkOutOfStore() {
@@ -64,13 +71,15 @@ void Client::walkOutOfStore() {
     queue.pop_front();
     queueMutex.unlock();
 
+    queueCV.notify_all();
+
     action = OUTSIDE;
 }
 
 void Client::live(Account* account, Shelf* shelf) {
     while(alive){
         action = OUTSIDE;
-        sleepRandom(5000,15000);
+        sleepRandom(1000,3000); //TODO sleepRandom(5000,15000);
         walkIntoStore();
         doShopping(account, shelf);
         walkOutOfStore();

@@ -9,6 +9,9 @@ std::deque<int> Baker::queueOven;
 std::mutex Baker::queueStockroomMutex;
 std::mutex Baker::queueTableMutex;
 std::mutex Baker::queueOvenMutex;
+std::condition_variable Baker::queueStockroomCV;
+std::condition_variable Baker::queueTableCV;
+std::condition_variable Baker::queueOvenCV;
 const int Baker::typesOfBakedGoods = 3;
 
 Baker::Baker() {
@@ -118,8 +121,14 @@ void Baker::useStockroom(Utility *stockroom) {
     queueStockroom.push_back(id);
     queueStockroomMutex.unlock();
 
-    while (!checkQueue(0)){
-        sleepRandom(100, 200);
+    {
+        std::unique_lock<std::mutex> lck(queueStockroomMutex);
+        queueStockroomCV.wait(lck, [this] { return queueStockroom.front() == this->id || !this->alive; });
+    }
+
+    if (!alive){
+        queueStockroomCV.notify_all();
+        return;
     }
 
     stockroom->startUsing();
@@ -133,6 +142,8 @@ void Baker::useStockroom(Utility *stockroom) {
     queueStockroomMutex.lock();
     queueStockroom.pop_front();
     queueStockroomMutex.unlock();
+
+    queueStockroomCV.notify_all();
 }
 
 void Baker::useTable(Utility *table) {
@@ -142,8 +153,14 @@ void Baker::useTable(Utility *table) {
     queueTable.push_back(id);
     queueTableMutex.unlock();
 
-    while (!checkQueue(1)){
-        sleepRandom(100, 200);
+    {
+        std::unique_lock<std::mutex> lck(queueTableMutex);
+        queueTableCV.wait(lck, [this] { return queueTable.front() == this->id || !this->alive; });
+    }
+
+    if (!alive){
+        queueTableCV.notify_all();
+        return;
     }
 
 
@@ -158,6 +175,8 @@ void Baker::useTable(Utility *table) {
     queueTable.pop_front();
     queueTableMutex.unlock();
 
+    queueTableCV.notify_all();
+
 }
 
 void Baker::useOven(Oven *oven) {
@@ -167,8 +186,14 @@ void Baker::useOven(Oven *oven) {
     queueOven.push_back(id);
     queueOvenMutex.unlock();
 
-    while (!checkQueue(2)){
-        sleepRandom(100, 200);
+    {
+        std::unique_lock<std::mutex> lck(queueOvenMutex);
+        queueOvenCV.wait(lck, [this] { return queueOven.front() == this->id || !this->alive; });
+    }
+
+    if (!alive){
+        queueOvenCV.notify_all();
+        return;
     }
 
     oven->putIn(nowProducing);
@@ -182,6 +207,8 @@ void Baker::useOven(Oven *oven) {
     queueOvenMutex.lock();
     queueOven.pop_front();
     queueOvenMutex.unlock();
+
+    queueOvenCV.notify_all();
 }
 
 void Baker::useShelf(Shelf *shelf) {
